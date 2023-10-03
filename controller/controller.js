@@ -1,6 +1,10 @@
 import livro from "../models/livro.js";
 
+// CRIANDO CLASSES PARA CADA ROTA DE LIVRO //
+
 class livroController {
+
+    // LISTAR LIVROS GET//
 
  static async listarlivros (request, response) {
     try {
@@ -10,6 +14,8 @@ class livroController {
         response.status(500).json({ message: `${erro.message} - falha na requisição`});
     }
  };
+
+ // LISTAR LIVROS POR ID GET//
 
  static async listarlivroporId (request, response) {
     try {
@@ -21,6 +27,8 @@ class livroController {
     }
  };
 
+ // CADASTRAR LIVROS POST //
+
  static async cadastrarLivro (request, response){
     try {
         const novolivro = await livro.create(request.body);
@@ -29,6 +37,8 @@ class livroController {
         response.status(500).json({ message: `${erro.message} - falha ao cadastrar livro`});
     }
  };
+
+ // ATUALIZAR LIVRO PUT //
 
  static async atualizarlivroporid (request, response) {
     try {
@@ -40,6 +50,8 @@ class livroController {
     }
  };
 
+ // DELETAR LIVRO DELETE //
+
  static async deletarlivroid (request, response) {
     try {
         const id = request.params.id;
@@ -50,5 +62,7 @@ class livroController {
     }
  };
 };
+
+// EXPORTANDO PARA O ARQUIVO ROTAS //
 
 export default livroController;

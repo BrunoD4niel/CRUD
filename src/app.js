@@ -45,13 +45,13 @@ function buscalivro(id) {
 
 // CRIANDO ROTAS //
 
-*/
 
 app.delete("/livros/:id", (request, response) => {
     const index = buscalivro(request.params.id);
     livros.splice(index, 1);
     response.status(200).send("Livro deletado!");
 });
+*/
 
 // EXPORTANDO VARIAVEL APP PARA O SERVIDOR
 

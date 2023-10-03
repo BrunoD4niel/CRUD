@@ -1,6 +1,8 @@
 import express from "express";
 import controller from "../controller/controller.js";
 
+// CRIANDO ROTAS HTTP //
+
 const routes = express.Router();
 
 routes.get("/livros", controller.listarlivros);
