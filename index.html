@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerenciamento de Livros</title>
+  <style>
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+h1 {
+  color: #333;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input, button {
+  padding: 8px;
+  margin: 5px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+button {
+  cursor: pointer;
+}
+
+
+  </style>
+</head>
+<body>
+  <h1>Biblioteca de Livros</h1>
+  
+  <!-- Formulário de cadastro de livros -->
+  <form id="livroForm">
+    <input type="hidden" id="livroId" />
+    <label for="titulo">Título:</label>
+    <input type="text" id="titulo" required />
+    <label for="paginas">Páginas:</label>
+    <input type="number" id="paginas" required />
+    <label for="preco">Preço:</label>
+    <input type="number" id="preco" step="0.01" required />
+    <button type="submit">Salvar Livro</button>
+  </form>
+
+  <!-- Tabela para listar livros -->
+  <table id="livrosTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Páginas</th>
+        <th>Preço</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+
+        const apiUrl = 'http://localhost:3000/livros';
+        const livroForm = document.getElementById('livroForm');
+        const livrosTableBody = document.querySelector('#livrosTable tbody');
+
+        // Função para listar livros
+        async function listarLivros() {
+        const response = await fetch(apiUrl);
+        const livros = await response.json();
+        livrosTableBody.innerHTML = '';
+        livros.forEach(livro => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${livro._id}</td>
+                <td>${livro.titulo}</td>
+                <td>${livro.paginas}</td>
+                <td>R$ ${livro.preco.toFixed(2)}</td>
+                <td>
+                    <button onclick="editarLivro('${livro._id}')">Editar</button>
+                    <button onclick="deletarLivro('${livro._id}')">Deletar</button>
+                </td>
+                `;
+                livrosTableBody.appendChild(row);
+            });
+        }
+
+        // Função para adicionar ou atualizar livro
+        async function adicionarOuAtualizarLivro(event) {
+        event.preventDefault();
+        const id = document.getElementById('livroId').value;
+        const titulo = document.getElementById('titulo').value;
+        const paginas = parseInt(document.getElementById('paginas').value);
+        const preco = parseFloat(document.getElementById('preco').value);
+
+        const livro = { titulo, paginas, preco };
+
+        if (id) {
+            await fetch(`${apiUrl}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(livro),
+            });
+        } else {
+            await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(livro),
+            });
+        }
+
+        livroForm.reset();
+        listarLivros();
+        }
+
+        // Função para preencher o formulário com os dados do livro para edição
+        async function editarLivro(id) {
+        const response = await fetch(`${apiUrl}/${id}`);
+        const livro = await response.json();
+        document.getElementById('livroId').value = livro._id;
+        document.getElementById('titulo').value = livro.titulo;
+        document.getElementById('paginas').value = livro.paginas;
+        document.getElementById('preco').value = livro.preco;
+        }
+
+        // Função para deletar um livro
+        async function deletarLivro(id) {
+        await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+        listarLivros();
+        }
+
+        livroForm.addEventListener('submit', adicionarOuAtualizarLivro);
+        listarLivros();
+
+  </script>
+</body>
+</html>
